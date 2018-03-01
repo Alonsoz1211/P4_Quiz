@@ -145,8 +145,9 @@ exports.deleteCmd = (rl, id) => {
         errorlog(`Falta el parámetro id.`);
     }else{
         try{
-            const quiz = model.deleteByIndex(id);
-                log(` ${colorize('Se ha eliminado', 'magenta')}: ${model.getByIndex(id).question}`);
+            const quiz = model.getByIndex(id).question
+                model.deleteByIndex(id);
+                log(` ${colorize('Se ha eliminado', 'magenta')}: ${quiz}`);
         }catch(error) {
             errorlog(error.message);
         }
