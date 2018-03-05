@@ -105,7 +105,7 @@ const playOne = () => {
     if (toBeResolved.length === 0) {
         console.log(`No hay nada mas que preguntar.`);
         console.log(`Fin del examen. Aciertos:`);
-        biglog(score, 'green');
+        biglog(score, 'magenta');
         rl.prompt();
     } else {
         let idAzar = toBeResolved[Math.floor(toBeResolved.length * Math.random())];
@@ -120,7 +120,7 @@ const playOne = () => {
             if(arrayRespuesta == null) {
                 console.log(`INCORRECTO.`);
                 console.log(`Fin del examen. Aciertos: `);
-                biglog(score, 'green');
+                biglog(score, 'magenta');
             }else if (arrayRespuesta[0].replace(respuestaCorrecta,quiz.answer).trim() == quiz.answer) {
                 score++;
                 console.log(` CORRECTO. Lleva ${score} aciertos `);
@@ -128,7 +128,7 @@ const playOne = () => {
             } else {
                 console.log(`INCORRECTO.`);
                 console.log(`Fin del examen. Aciertos: `);
-                biglog(score, 'green');
+                biglog(score, 'magenta');
             }
             rl.prompt();
         });
