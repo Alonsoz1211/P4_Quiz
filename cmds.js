@@ -10,12 +10,12 @@ exports.helpCmd = rl => {
     log("   h|help - Muestra esta ayuda.");
     log("   list - Listar los quizzes existentes.");
     log("   show <id> - Muestra la pregunta y la respuesta el quiz indicado.");
-    log("   add - Añadir un nuevo quiz interactivamente.");
+    log("   add - Añadir un nuevo quiz interactivamente.");
     log("   delete <id> - Borrar el quiz indicado.");
     log("   edit <id> - Editar el quiz indicado.");
     log("   test <id> - Probar el quiz indicado.");
     log("   p|play - Jugar a preguntar aleatoriamente todos los quizzes.");
-    log("   credits - Créditos.");
+    log("   credits - Créditos.");
     log("   q|quit - Salir del programa.");
     rl.prompt();
 };
@@ -72,13 +72,13 @@ exports.testCmd = (rl, id) => {
                 const arrayRespuesta= resp.match(respuestaCorrecta);
                 if(arrayRespuesta == null) {
                     console.log("Su respuesta es : ");
-                    biglog("Incorrecta", 'red');
+                    log("Incorrecta", 'red');
                 }else if (arrayRespuesta[0].replace(respuestaCorrecta,quiz.answer).trim() == quiz.answer) {
                     console.log("Su respuesta es : ");
-                    biglog("Correcta", 'green');
+                    log("Correcta", 'green');
                 } else{
                     console.log("Su respuesta es : ");
-                    biglog("Incorrecta", 'red');
+                    log("Incorrecta", 'red');
                 }
                 rl.prompt();
             });
