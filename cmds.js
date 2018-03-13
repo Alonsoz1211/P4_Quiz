@@ -113,35 +113,23 @@ exports.showCmd = (rl,id) => {
 
 exports.testCmd = (rl, id) => {
 
-    if(typeof id === "undefined") {
-        errorlog(`Falta el parámetro id.`);
-        rl.prompt();
-    }else {
         validateId(id)
             .then(id => models.quiz.findById(id))
             .then(quiz => {
                 if (!quiz) {
                     throw new Error(`No existe la pregunta asociada al id= ${id}.`);
                 }
-                return makeQuestion(rl, `${quiz.question} : `)
-                    .then(q => {
-                        var respuestaCorrecta = RegExp(quiz.answer, 'i');
-                        const arrayRespuesta = q.match(respuestaCorrecta);
-                        if (arrayRespuesta == null) {
-                            console.log("Su respuesta es : ");
-                            log("Incorrecta", 'red');
-                        } else if (arrayRespuesta[0].replace(respuestaCorrecta, quiz.answer).trim() == quiz.answer) {
-                            console.log("Su respuesta es : ");
-                            log("Correcta", 'green');
-                        } else {
-                            console.log("Su respuesta es : ");
-                            log("Incorrecta", 'red');
-                        }
-                        rl.prompt();
-                    });
+                        return makeQuestion(rl, `${quiz.question} ? `)
+                            .then(a => {
+                                if(a.toLowerCase().trim() === quiz.answer.toLowerCase().trim()){
+                                    log('CORRECTO', 'green');
+                                }else {
+                                    log('INCORRECTO', 'green');
+                                }
+                            });
             })
             .catch(Sequelize.ValidationError, error => {
-                error.log('Respuesta erronea');
+                error.log('Quiz erroneoq');
                 error.errors.forEach(({message}) => errorlog(message));
             })
             .catch(error => {
@@ -150,7 +138,7 @@ exports.testCmd = (rl, id) => {
             .then(() => {
                 rl.prompt();
             });
-    }
+
 };
 
 
