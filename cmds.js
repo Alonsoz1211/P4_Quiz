@@ -123,7 +123,7 @@ exports.testCmd = (rl, id) => {
                 if (!quiz) {
                     throw new Error(`No existe la pregunta asociada al id= ${id}.`);
                 }
-                return makeQuestion(rl, `  ${quiz.question} : `)
+                return makeQuestion(rl, `${quiz.question} : `)
                     .then(q => {
                         var respuestaCorrecta = RegExp(quiz.answer, 'i');
                         const arrayRespuesta = q.match(respuestaCorrecta);
@@ -158,67 +158,53 @@ exports.testCmd = (rl, id) => {
 
 exports.playCmd = rl => {
     let score = 0;
-    let toBeResolved = [];
+    let alreadyAsked = [];
 
-    models.quiz.findAll()
-        .each(quiz=> {
-        toBeResolved.push(quiz.id);
-    });
+const playloop = () => {
+      const whereOpt = {'id' : {[Sequelize.Op.notIn]:alreadyAsked}};
+      return models.quiz.count({where: whereOpt})
+          .then(function (count) {
+          return models.quiz.findAll({
+                  where: whereOpt,
+                  offset: Math.floor(Math.random() * count),
+                  limit: 1
+          });
+          })
+          .then(quizzes => quizzes[0])
+          .then(quiz => {
+              if(!quiz) {
+                  log('No hay nada más que preguntar. ');
+                  log('Fin del juego.');
+                  rl.prompt();
+                  return;
+              }
 
-    const playOne = () => {
 
-        if (toBeResolved.length === 0) {
-            console.log(`No hay nada mas que preguntar.`);
-            console.log(`Fin del examen. Aciertos:`);
-            biglog(score, 'magenta');
-            rl.prompt();
-        } else {
+              alreadyAsked.push(quiz.id);
 
-            let idAzar = toBeResolved[Math.floor(toBeResolved.length * Math.random())];
-            var index = toBeResolved.indexOf(idAzar);
-            if (index > -1) {
-                toBeResolved.splice(index, 1);
-            }
-            validateId(idAzar)
-                .then(id => models.quiz.findById(id))
-                .then(quiz => {
-                    if (!quiz) {
-                        throw new Error(`No existe la pregunta asociada al id= ${id}.`);
-                    }
-                    return makeQuestion(rl, `  ${quiz.question} : `)
-                        .then(q => {
-                            var respuestaCorrecta = RegExp(quiz.answer, 'i');
-                            const arrayRespuesta = q.match(respuestaCorrecta);
-                            if (arrayRespuesta == null) {
-                                console.log(`INCORRECTO.`);
-                                console.log(`Fin del examen. Aciertos: `);
-                                biglog(score, 'magenta');
-                            } else if (arrayRespuesta[0].replace(respuestaCorrecta, quiz.answer).trim() == quiz.answer) {
-                                score++;
-                                console.log(` CORRECTO. Lleva ${score} aciertos `);
-                                playOne();
-                            } else {
-                                console.log(`INCORRECTO.`);
-                                console.log(`Fin del examen. Aciertos: `);
-                                biglog(score, 'magenta');
-                            }
-                            rl.prompt();
-                        });
-                })
-                .catch(Sequelize.ValidationError, error => {
-                    error.log('Respuesta erronea');
-                    error.errors.forEach(({message}) => errorlog(message));
-                })
-                .catch(error => {
-                    errorlog(error.message);
-                })
-                .then(() => {
-                    rl.prompt();
-                });
-        }
-    };
-playOne();
+              return makeQuestion(rl, `${quiz.question} ? `)
+                  .then(a => {
+                      if(a.toLowerCase().trim() === quiz.answer.toLowerCase().trim()){
+                          log(`CORRECTO - Lleva ${++score} aciertos`);
+                          playloop();
+                      }else{
+                          log(`INCORRECTO. `);
+                          log(`Fin del juego. Aciertos:  ${score} `);
+                          rl.prompt();
+                      }
+                  });
+          })
+          .catch(error => {
+              errorlog(error.message);
+          });
 };
+playloop();
+};
+
+
+
+
+
 
 /**
  * Borra el quiz indicado.
