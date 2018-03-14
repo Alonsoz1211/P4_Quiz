@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize("sqlite:quizzes.sqlite", {logging: false});
 
-sequelize.define('quiz', {
+const quiz = sequelize.define('quiz', {
     question: {
         type: Sequelize.STRING,
         unique: {msg: "Ya existe una pregunta"},
