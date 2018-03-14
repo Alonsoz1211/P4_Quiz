@@ -129,7 +129,7 @@ exports.testCmd = (rl, id) => {
                             });
             })
             .catch(Sequelize.ValidationError, error => {
-                error.log('Quiz erroneoq');
+                error.log('Quiz erroneo');
                 error.errors.forEach(({message}) => errorlog(message));
             })
             .catch(error => {
@@ -163,6 +163,7 @@ const playloop = () => {
               if(!quiz) {
                   log('No hay nada más que preguntar. ');
                   log('Fin del juego.');
+                  log(`Aciertos:  ${score} `);
                   rl.prompt();
                   return;
               }
