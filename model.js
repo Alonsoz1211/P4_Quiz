@@ -1,35 +1,43 @@
 const Sequelize = require('sequelize');
-const options = {logging: false};
-const sequelize = new Sequelize("sqlite:quizzes.sqlite", options);
 
-const quiz = sequelize.define( 'quiz',
-    {question: {
-            type: Sequelize.STRING,
-            unique: {msg: "Quiz already exists"},
-            validate: {notEmpty: {msg: "Question cannot be empty"}}
-        },
-        answer: {
-            type: Sequelize.STRING,
-            validate:{notEmpty: {msg: "Answer cannot be empty"}}
-        }
-    });
+const sequelize = new Sequelize("sqlite:quizzes.sqlite", {logging: false});
+
+const quiz = sequelize.define('quiz', {
+    question: {
+        type: Sequelize.STRING,
+        unique: {msg: "Ya existe una pregunta"},
+        validate: {notEmpty: {msg: "La respuesta no puede estar vacía"}}
+    },
+    answer: {
+        type: Sequelize.STRING,
+validate: {notEmpty: {msg: "La respuesta no puede estar vacía"}}
+    }
+});
+
 
 sequelize.sync()
-    .then(()=> sequelize.models.quiz.count())
-    .then((count) => {
+    .then(() => sequelize.models.quiz.count())
+    .then(count => {
         if (!count) {
             return sequelize.models.quiz.bulkCreate([
-                {question: 'Capital of Spain', answer: 'Madrid', authorId: 1},
-                {question: 'Capital of France', answer: 'Paris', authorId: 1},
-                {question: 'Capital of Italy', answer: 'Rome', authorId: 2},
-                {question: 'Capital of Russia', answer: 'Moscow', authorId: 3}
+                { question: "Capital de Italia", answer:"Roma"},
+                { question: "Capital de Francia", answer:"Paris"},
+                { question: "Capital de España", answer:"Madrid"},
+                { question: "Capital de Portugal", answer:"Lisboa"}
             ]);
         }
     })
-    .catch( err =>
-        console.log(`    ${err}`));
+    .catch(error => {
+        console.log(error);
+    });
 
 module.exports = sequelize;
+
+
+
+
+
+
 
 
 
